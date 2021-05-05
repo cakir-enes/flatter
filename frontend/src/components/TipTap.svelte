@@ -7,7 +7,6 @@
   export let onNewEntry: (content: string) => void;
   export let activeStream: string;
 
-  let element;
   let editor: Editor;
   let showRef = false;
   let refRect: ClientRect = {
@@ -88,33 +87,15 @@
         onNewEntry(content);
       },
     }}
-  >
-    {#if editor}
-      <button
-        on:click={() =>
-          editor.chain().focus().toggleHeading({ level: 1 }).run()}
-        class:active={editor.isActive("heading", { level: 1 })}
-      >
-        H1
-      </button>
-      <button
-        on:click={() =>
-          editor.chain().focus().toggleHeading({ level: 2 }).run()}
-        class:active={editor.isActive("heading", { level: 2 })}
-      >
-        H2
-      </button>
-      <button
-        on:click={() => editor.chain().focus().setParagraph().run()}
-        class:active={editor.isActive("paragraph")}
-      >
-        P
-      </button>
-      <input bind:value={activeStream} />
-    {/if}
-    <div class="editorx" bind:this={element} />
-  </div>
+  />
 </div>
+
+{#if editor}
+  <div class="clippy">
+    <span>Active For: 23M</span>
+    <input bind:value={activeStream} />
+  </div>
+{/if}
 
 <style lang="scss">
   .container {
@@ -132,6 +113,7 @@
     width: 100%;
     max-width: 80ch;
     z-index: -1;
+
     margin-left: auto;
     margin-right: auto;
     margin-top: 10%;
@@ -143,5 +125,13 @@
   .show {
     z-index: 10;
     opacity: 1;
+  }
+
+  .clippy {
+    position: fixed;
+    bottom: 40px;
+    left: 50%;
+    transform: translate(-50%, 50%);
+    display: flex;
   }
 </style>
