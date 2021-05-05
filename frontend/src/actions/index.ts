@@ -6,7 +6,7 @@ import { defaultExtensions } from "@tiptap/starter-kit";
 
 export function tiptapEditor(
     node: HTMLElement,
-    params: { init: (Editor) => void }
+    params: { init: (Editor) => void, onDone: () => void }
 ) {
     let e = new Editor({
         element: node,
@@ -19,7 +19,16 @@ export function tiptapEditor(
             ...defaultExtensions({
                 paragraph: { HTMLAttributes: { class: "paroo" } },
             }),
-            Bold,
+            Bold.extend({
+                addKeyboardShortcuts() {
+                    return {
+                        'Control-Enter': () => {
+                            params.onDone()
+                            return true
+                        },
+                    }
+                },
+            }),
             Highlight,
             Typography,
         ],

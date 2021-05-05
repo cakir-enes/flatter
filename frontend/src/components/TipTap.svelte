@@ -2,6 +2,8 @@
   import { Editor, posToDOMRect } from "@tiptap/core";
   import RefFinder from "./RefFinder.svelte";
   import { tiptapEditor } from "../actions";
+  import { createEventDispatcher } from "svelte";
+  import { EditorEvents } from "../types";
 
   export let show: boolean = false;
 
@@ -16,6 +18,8 @@
     height: 0,
     right: 0,
   };
+
+  let dispatch = createEventDispatcher<EditorEvents>();
 
   function position() {
     const { state, composing } = editor.view;
@@ -69,6 +73,11 @@
     use:tiptapEditor={{
       init: (e) => {
         editor = e;
+      },
+      onDone: () => {
+        const content = editor.getHTML();
+        editor.chain().clearContent().run();
+        dispatch("entry", { content });
       },
     }}
   >
