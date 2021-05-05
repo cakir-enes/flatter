@@ -28,14 +28,6 @@
     }
   }
 
-  $: {
-    if (focused != -1 && list) {
-      // console.log();
-      // (document.activeElement as any).blur();
-      (list.children[focused] as any).focus();
-    }
-  }
-
   function handleKeyDown(e: KeyboardEvent) {
     if (e.key === "Enter") {
       onSelection("asd");
@@ -53,8 +45,8 @@
   <div bind:this={container} class="container" on:keydown={handleKeyDown}>
     <input type="text" tabindex={1} bind:this={query} />
     <ul bind:this={list}>
-      {#each opts as opt}
-        <li tabindex={0}>opt</li>
+      {#each opts as opt, i}
+        <li class:focused={i == focused}>{opt}</li>
       {/each}
     </ul>
   </div>
@@ -73,9 +65,9 @@
 
   li {
     background: white;
-  }
 
-  li:focus {
-    background: red;
+    &.focused {
+      background: red;
+    }
   }
 </style>

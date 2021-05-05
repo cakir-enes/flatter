@@ -45,6 +45,7 @@
     }
     if (!show) {
       showRef = false;
+      editor?.setEditable(true);
     }
   }
 
@@ -52,12 +53,11 @@
     if (e.ctrlKey) {
       e.stopPropagation();
       if (e.key === " " && show) {
+        editor.setEditable(false);
         position();
         showRef = !showRef;
       }
     } else {
-      console.log(e);
-
       showRef = false;
     }
   }
