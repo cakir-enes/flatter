@@ -1,35 +1,54 @@
 <script lang="ts">
-    export let items: string[];
+  export let title: string;
+  export let items: string[] = Array.from({ length: 10 }).map(
+    (_, i) => `${i} Message \n Some other stuff`
+  );
+
+  let focus = -1;
+
+  function handleKeyDown(e: KeyboardEvent) {
+    if (e.key === "ArrowDown" || e.key === "j") {
+      e.stopPropagation();
+      if (focus < items.length - 1) focus++;
+    } else if (e.key === "ArrowUp" || e.key === "k") {
+      e.stopPropagation();
+      if (focus > 0) focus--;
+    }
+  }
 </script>
 
-<section>
-    <div class="title">Stream:Topic</div>
-    <div class="content">
-        <div>1A message<br />some othyer stuff</div>
-        <div>2A message<br />some othyer stuff</div>
-        <div>3A message<br />some othyer stuff</div>
-    </div>
+<section {title} tabindex={0} on:keydown={handleKeyDown}>
+  <div class="title">Stream:Topic</div>
+  <ul class="content">
+    {#each items as entry, i}
+      <li class:selected={i === focus}>{entry}</li>
+    {/each}
+  </ul>
 </section>
 
 <style lang="scss">
-    .title {
-    }
+  .title {
+  }
 
-    section {
-        background: yellow;
-        width: 100%;
-        max-width: 45ch;
-        padding: 0.5em;
-    }
+  section {
+    background: yellow;
+    width: 100%;
+    max-width: 45ch;
+    padding: 0.5em;
 
-    .content {
-        display: flex;
-        flex-direction: column;
-        flex-wrap: wrap;
-
-        div {
-            width: 20ch;
-            background: white;
-        }
+    &:focus {
+      border: 2px solid black;
     }
+  }
+
+  ul {
+    width: 20ch;
+    background: white;
+  }
+
+  li {
+    &.selected {
+      background: red;
+    }
+  }
 </style>

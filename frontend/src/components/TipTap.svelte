@@ -2,10 +2,10 @@
   import { Editor, posToDOMRect } from "@tiptap/core";
   import RefFinder from "./RefFinder.svelte";
   import { tiptapEditor } from "../actions";
-  import { createEventDispatcher } from "svelte";
-  import type { EditorEvents } from "../types";
 
   export let show: boolean = false;
+  export let onNewEntry: (content: string) => void;
+  export let activeStream: string;
 
   let element;
   let editor: Editor;
@@ -18,8 +18,6 @@
     height: 0,
     right: 0,
   };
-
-  let dispatch = createEventDispatcher<EditorEvents>();
 
   function position() {
     const { state, composing } = editor.view;
@@ -87,7 +85,7 @@
       onDone: () => {
         const content = editor.getHTML();
         editor.chain().clearContent().run();
-        dispatch("entry", { content });
+        onNewEntry(content);
       },
     }}
   >
@@ -112,6 +110,7 @@
       >
         P
       </button>
+      <input bind:value={activeStream} />
     {/if}
     <div class="editorx" bind:this={element} />
   </div>
