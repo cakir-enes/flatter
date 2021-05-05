@@ -3,7 +3,7 @@
   import RefFinder from "./RefFinder.svelte";
   import { tiptapEditor } from "../actions";
   import { createEventDispatcher } from "svelte";
-  import { EditorEvents } from "../types";
+  import type { EditorEvents } from "../types";
 
   export let show: boolean = false;
 
@@ -30,7 +30,7 @@
     const { left, width, y } = editor.view.dom.getBoundingClientRect();
 
     refRect = {
-      left: left - 7,
+      left: left,
       top: rect.top + rect.height,
       width: width,
       bottom: 0,
@@ -64,7 +64,17 @@
 </script>
 
 <div class="container" class:show>
-  <RefFinder rect={refRect} show={showRef} />
+  <RefFinder
+    rect={refRect}
+    show={showRef}
+    onSelection={(id) => {
+      showRef = false;
+      setTimeout(() => {
+        editor.setEditable(true);
+        editor.view.focus();
+      });
+    }}
+  />
 
   <div
     class="editor"
