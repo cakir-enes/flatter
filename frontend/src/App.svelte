@@ -25,7 +25,42 @@
     }
     // document.querySelector(`section[title=`);
   });
+
+  export let themeSettings = {
+    font: {
+      family: "Merriweather, serif",
+    },
+    main: {
+      background: "white",
+    },
+    colors: {
+      primary: "#26292C",
+      text: "#f5f3f5ff",
+      bg2: "#66a182ff",
+      accent: "#f0c808ff",
+      other: "#6883baff",
+    },
+  };
+
+  function encodeB64(str) {
+    return btoa(str);
+  }
+
+  function makeCSSVars(settings, prefix = "-") {
+    return Object.entries(settings)
+      .flatMap(([key, value]) => {
+        const path = prefix + "-" + key;
+        if (typeof value === "object") return makeCSSVars(value, path);
+        else return `${path}:${value};`;
+      })
+      .join("\n");
+  }
+
+  $: themeCSS = `:root {${makeCSSVars(themeSettings)}}`;
 </script>
+
+<link rel="stylesheet" href="data:text/css;base64,{encodeB64(themeCSS)}" />
+<link rel="stylesheet" href="https://unpkg.com/ress/dist/ress.min.css" />
 
 <svelte:window on:keydown={handleKeyDown} />
 
@@ -36,6 +71,9 @@
 
 <style lang="scss">
   :global(body) {
+    background: #1e1f1f;
+    color: var(--colors-text);
+
     margin: 0;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto",
       "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans",

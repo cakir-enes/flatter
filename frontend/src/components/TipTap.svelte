@@ -1,4 +1,6 @@
 <script lang="ts">
+  import Clippy from "./Clippy.svelte";
+
   import { Editor, posToDOMRect } from "@tiptap/core";
   import RefFinder from "./RefFinder.svelte";
   import { tiptapEditor } from "../actions";
@@ -91,10 +93,7 @@
 </div>
 
 {#if editor}
-  <div class="clippy">
-    <span>Active For: 23M</span>
-    <input bind:value={activeStream} />
-  </div>
+  <Clippy />
 {/if}
 
 <style lang="scss">
@@ -125,13 +124,5 @@
   .show {
     z-index: 10;
     opacity: 1;
-  }
-
-  .clippy {
-    position: fixed;
-    bottom: 40px;
-    left: 50%;
-    transform: translate(-50%, 50%);
-    display: flex;
   }
 </style>
