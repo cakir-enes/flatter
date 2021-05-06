@@ -68,7 +68,7 @@
       showRef = false;
       setTimeout(() => {
         editor.setEditable(true);
-        editor.view.focus();
+        editor.chain().focus().insertNode("ref", { id }).run();
       });
     }}
   />
