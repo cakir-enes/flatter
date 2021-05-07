@@ -1,7 +1,9 @@
 <script lang="ts">
+    import { fade } from "svelte/transition";
+    export let anchor: boolean;
 </script>
 
-<div class="clippy">
+<div class="clippy" class:dock={!anchor} transition:fade>
     <div>
         <span>01<br />23</span>
     </div>
@@ -78,18 +80,20 @@
         height: 2em;
     }
 
-    .clippy {
+    .dock {
         position: fixed;
         bottom: 60px;
         left: 50%;
         transform: translate(-50%, 50%);
-        display: flex;
-
-        background: var(--colors-primary);
-        padding: 10px;
         box-shadow: 0px 4px 4px 2px rgba(0, 0, 0, 0.25);
         border-radius: 4px;
+    }
 
+    .clippy {
+        display: flex;
+        justify-content: space-between;
+        background: var(--colors-primary);
+        padding: 10px;
         & div {
             display: flex;
 

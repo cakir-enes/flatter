@@ -2,6 +2,7 @@
   import Stream from "./components/Stream.svelte";
   import Editor from "./components/TipTap.svelte";
 
+  import interact from "interactjs";
   let show = false;
   let activeStream: string;
   let lastFocusedStream: HTMLElement = null;
@@ -20,11 +21,73 @@
   window.addEventListener("focusin", (ev: FocusEvent) => {
     const title = ev.target.title;
     if (title) {
-      console.count("FOCUSING TO strim");
       lastFocusedStream = ev.target as HTMLElement;
     }
     // document.querySelector(`section[title=`);
   });
+
+  // target elements with the "draggable" class
+  interact(".draggable")
+    .draggable({
+      // enable inertial throwing
+      inertia: true,
+      // keep the element within the area of it's parent
+      modifiers: [
+        interact.modifiers.restrictRect({
+          restriction: document.body,
+          endOnly: true,
+        }),
+      ],
+      // enable autoScroll
+      autoScroll: true,
+
+      listeners: {
+        // call this function on every dragmove event
+        move: dragMoveListener,
+
+        // call this function on every dragend event
+        end(event) {
+          var textEl = event.target.querySelector("p");
+
+          textEl &&
+            (textEl.textContent =
+              "moved a distance of " +
+              Math.sqrt(
+                (Math.pow(event.pageX - event.x0, 2) +
+                  Math.pow(event.pageY - event.y0, 2)) |
+                  0
+              ).toFixed(2) +
+              "px");
+        },
+      },
+    })
+    .resizable({
+      edges: {
+        bottom: true,
+        right: true,
+        // top   : true,       // Use pointer coords to check for resize.
+        // left  : false,      // Disable resizing from left edge.
+        // bottom: '.resize-s',// Resize if pointer target matches selector
+        // right : handleEl    // Resize if pointer target is the given Element
+      },
+    });
+
+  function dragMoveListener(event) {
+    var target = event.target;
+    // keep the dragged position in the data-x/data-y attributes
+    var x = (parseFloat(target.getAttribute("data-x")) || 0) + event.dx;
+    var y = (parseFloat(target.getAttribute("data-y")) || 0) + event.dy;
+
+    // translate the element
+    target.style.transform = "translate(" + x + "px, " + y + "px)";
+
+    // update the posiion attributes
+    target.setAttribute("data-x", x);
+    target.setAttribute("data-y", y);
+  }
+
+  // this function is used later in the resizing and gesture demos
+  window.dragMoveListener = dragMoveListener;
 
   export let themeSettings = {
     font: {
@@ -73,7 +136,8 @@
   :global(body) {
     background: #1e1f1f;
     color: var(--colors-text);
-
+    height: 100vh;
+    width: 100vw;
     margin: 0;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto",
       "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans",

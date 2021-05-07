@@ -89,21 +89,36 @@
         onNewEntry(content);
       },
     }}
-  />
+  >
+    <Clippy anchor={true} />
+  </div>
 </div>
 
-{#if editor}
-  <Clippy />
+{#if !show}
+  <Clippy anchor={false} />
 {/if}
 
 <style lang="scss">
+  :global(.ProseMirror) {
+    background: var(--colors-accent) !important;
+    color: var(--colors-primary);
+    padding: 1.5em;
+    border-radius: 4px;
+    // box-shadow: rgba(0, 0, 0, 0.25) 0px 0.0625em 0.0625em,
+    //   rgba(0, 0, 0, 0.25) 0px 0.125em 0.5em,
+    //   rgba(255, 255, 255, 0.1) 0px 0px 0px 1px inset;
+
+    box-shadow: rgba(0, 0, 0, 0.2) 0px 60px 40px -7px;
+    outline: none;
+  }
+
   .container {
     top: 0;
     left: 0;
     position: absolute;
     width: 100vw;
     height: 100vh;
-    background: rgba(20, 133, 189, 0.363);
+    background: none;
     opacity: 0;
     z-index: -1;
   }
@@ -117,7 +132,6 @@
     margin-right: auto;
     margin-top: 10%;
     max-height: 90%;
-    background: #023;
     opacity: 0;
   }
 

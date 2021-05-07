@@ -1,7 +1,8 @@
 package main
 
 import (
-    _ "embed"
+	_ "embed"
+
 	"github.com/wailsapp/wails"
 )
 
@@ -18,12 +19,13 @@ var css string
 func main() {
 
 	app := wails.CreateApp(&wails.AppConfig{
-		Width:  1024,
-		Height: 768,
-		Title:  "guarko",
-		JS:     js,
-		CSS:    css,
-		Colour: "#131313",
+		Width:     1024,
+		Height:    768,
+		Title:     "guarko",
+		Resizable: true,
+		JS:        js,
+		CSS:       css,
+		Colour:    "#131313",
 	})
 
 	app.Bind(basic)

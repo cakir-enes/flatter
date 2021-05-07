@@ -5,6 +5,7 @@
   );
 
   let focus = -1;
+  let selections = {};
 
   function handleKeyDown(e: KeyboardEvent) {
     if (e.key === "ArrowDown" || e.key === "j") {
@@ -13,17 +14,27 @@
     } else if (e.key === "ArrowUp" || e.key === "k") {
       e.stopPropagation();
       if (focus > 0) focus--;
+    } else if (e.key === " ") {
+      e.stopPropagation();
+      if (selections[focus]) {
+        delete selections[focus];
+        selections = selections;
+      } else {
+        selections[focus] = true;
+      }
     }
   }
 </script>
 
-<section {title} tabindex={0} on:keydown={handleKeyDown}>
+<section class="draggable" {title} tabindex={0} on:keydown={handleKeyDown}>
+  <div class="handle" />
   <div class="title">Stream:Topic</div>
   <ul class="content">
     {#each items as entry, i}
-      <li class:selected={i === focus}>
+      <li class:focused={i === focus} class:selected={selections[i]}>
         <span>
           {entry}
+          <span style="opacity: 0.6; margin-left: 4px"> • 12:23 </span>
         </span>
       </li>
     {/each}
@@ -43,6 +54,7 @@
     padding: 1.5em;
     transition: ease 0.4s;
     transition-property: box-shadow;
+    overflow: auto;
 
     box-shadow: rgba(0, 0, 0, 0.25) 0px 0.0625em 0.0625em,
       rgba(0, 0, 0, 0.25) 0px 0.125em 0.5em,
@@ -51,6 +63,14 @@
       box-shadow: rgba(0, 0, 0, 0.2) 0px 60px 40px -7px;
       // box-shadow: rgba(0, 0, 0, 0.2) 0px 20px 30px;
     }
+  }
+
+  .handle {
+    width: 70%;
+    background: var(--colors-text);
+    height: 0.2em;
+    margin: 0 auto 0.5em;
+    opacity: 0.8;
   }
 
   ul {
@@ -62,6 +82,12 @@
     margin-bottom: 4px;
     padding: 1px 4px;
     line-height: 1.2;
+
+    &.focused {
+      border: 1px solid var(--colors-accent);
+      border-radius: 2px;
+    }
+
     &.selected {
       & span {
         background-color: var(--colors-accent);
