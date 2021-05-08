@@ -1,6 +1,6 @@
 <script lang="ts">
   export let title: string;
-  export let items: string[] = Array.from({ length: 10 }).map(
+  export let entries: string[] = Array.from({ length: 10 }).map(
     (_, i) => `${i} Message \n Some other stuff`
   );
 
@@ -10,7 +10,7 @@
   function handleKeyDown(e: KeyboardEvent) {
     if (e.key === "ArrowDown" || e.key === "j") {
       e.stopPropagation();
-      if (focus < items.length - 1) focus++;
+      if (focus < entries.length - 1) focus++;
     } else if (e.key === "ArrowUp" || e.key === "k") {
       e.stopPropagation();
       if (focus > 0) focus--;
@@ -27,10 +27,9 @@
 </script>
 
 <section class="draggable" {title} tabindex={0} on:keydown={handleKeyDown}>
-  <div class="handle" />
   <div class="title">Stream:Topic</div>
   <ul class="content">
-    {#each items as entry, i}
+    {#each entries as entry, i}
       <li class:focused={i === focus} class:selected={selections[i]}>
         <span>
           {entry}
@@ -39,6 +38,7 @@
       </li>
     {/each}
   </ul>
+  <div class="handle" />
 </section>
 
 <style lang="scss">
@@ -52,6 +52,7 @@
     width: 100%;
     max-width: 45ch;
     padding: 1.5em;
+    padding-bottom: 1em;
     transition: ease 0.4s;
     transition-property: box-shadow;
     overflow: auto;
@@ -71,6 +72,7 @@
     height: 0.2em;
     margin: 0 auto 0.5em;
     opacity: 0.8;
+    margin-top: 1em;
   }
 
   ul {

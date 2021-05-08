@@ -7,6 +7,8 @@
   let activeStream: string;
   let lastFocusedStream: HTMLElement = null;
 
+  let streams = { "Random:Garbage": ["asdasda", "zczczxc"] };
+
   const blackKeys = ["Meta", "Tab", "Super", "OS", "Alt"];
   function handleKeyDown(e: KeyboardEvent) {
     if (e.key === "Escape") {
@@ -42,23 +44,8 @@
       autoScroll: true,
 
       listeners: {
-        // call this function on every dragmove event
         move: dragMoveListener,
-
-        // call this function on every dragend event
-        end(event) {
-          var textEl = event.target.querySelector("p");
-
-          textEl &&
-            (textEl.textContent =
-              "moved a distance of " +
-              Math.sqrt(
-                (Math.pow(event.pageX - event.x0, 2) +
-                  Math.pow(event.pageY - event.y0, 2)) |
-                  0
-              ).toFixed(2) +
-              "px");
-        },
+        end(event) {},
       },
     })
     .resizable({
@@ -129,7 +116,9 @@
 
 <main>
   <Editor bind:activeStream {show} />
-  <Stream title="Stream 1" />
+  {#each Object.entries(streams) as [title, entries]}
+    <Stream {title} {entries} />
+  {/each}
 </main>
 
 <style lang="scss">

@@ -20,12 +20,21 @@
     right: 0,
   };
 
-  function position() {
-    const { state, composing } = editor.view;
-    const { doc, selection } = state;
+  let strimRect: ClientRect = {
+    left: 0,
+    top: 0,
+    width: 0,
+    bottom: 0,
+    height: 0,
+    right: 0,
+  };
 
-    const { from, to, empty, $anchor } = selection;
+  function position() {
+    const { state } = editor.view;
+    const { selection } = state;
+    const { from, to } = selection;
     let rect = posToDOMRect(editor.view, from, to);
+
     const { left, width, y } = editor.view.dom.getBoundingClientRect();
 
     refRect = {
@@ -36,9 +45,32 @@
       height: window.innerHeight - y,
       right: 0,
     };
+
+    strimRect = {
+      left: left,
+      top: rect.y - 23,
+      width: width,
+      bottom: 0,
+      height: window.innerHeight - y,
+      right: 0,
+    };
+
+    console.log("STRIM ", strimRect);
+  }
+
+  function focus() {
+    showRef = false;
+    setTimeout(() => {
+      editor.setEditable(true);
+      editor.chain().focus().run();
+    });
   }
 
   $: {
+    if (editor) {
+      position();
+    }
+
     if (show && !showRef) {
       editor.chain().focus();
     }
@@ -66,11 +98,12 @@
   <RefFinder
     rect={refRect}
     show={showRef}
+    onCancel={() => focus()}
     onSelection={(id) => {
       showRef = false;
       setTimeout(() => {
         editor.setEditable(true);
-        editor.chain().focus().insertNode("ref", { id }).run();
+        editor.chain().focus().insertNode("ref", { id }).insertText(" ").run();
       });
     }}
   />
@@ -91,6 +124,23 @@
     }}
   >
     <Clippy anchor={true} />
+    <RefFinder
+      rect={strimRect}
+      show={true}
+      onCancel={() => focus()}
+      onSelection={(id) => {
+        showRef = false;
+        setTimeout(() => {
+          editor.setEditable(true);
+          editor
+            .chain()
+            .focus()
+            .insertNode("ref", { id })
+            .insertText(" ")
+            .run();
+        });
+      }}
+    />
   </div>
 </div>
 
@@ -110,6 +160,14 @@
 
     box-shadow: rgba(0, 0, 0, 0.2) 0px 60px 40px -7px;
     outline: none;
+  }
+
+  :global(.reference) {
+    background: var(--colors-primary);
+    color: var(--colors-bg2);
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-weight: bold;
   }
 
   .container {
