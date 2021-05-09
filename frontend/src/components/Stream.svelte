@@ -1,8 +1,6 @@
 <script lang="ts">
-  export let title: string;
-  export let entries: string[] = Array.from({ length: 10 }).map(
-    (_, i) => `${i} Message \n Some other stuff`
-  );
+  import type { RTopic } from "../stores/RTopic";
+  export let topic: RTopic;
 
   let focus = -1;
   let selections = {};
@@ -10,7 +8,7 @@
   function handleKeyDown(e: KeyboardEvent) {
     if (e.key === "ArrowDown" || e.key === "j") {
       e.stopPropagation();
-      if (focus < entries.length - 1) focus++;
+      if (focus < $topic.entries.length - 1) focus++;
     } else if (e.key === "ArrowUp" || e.key === "k") {
       e.stopPropagation();
       if (focus > 0) focus--;
@@ -26,14 +24,18 @@
   }
 </script>
 
-<section class="draggable" {title} tabindex={0} on:keydown={handleKeyDown}>
-  <div class="title">Stream:Topic</div>
+<section class="draggable" tabindex={0} on:keydown={handleKeyDown}>
+  <div class="heading">
+    <span class="stream">{$topic.stream}</span>
+    <span class="title">{$topic.title}</span>
+  </div>
+
   <ul class="content">
-    {#each entries as entry, i}
+    {#each $topic.entries as entry, i}
       <li class:focused={i === focus} class:selected={selections[i]}>
-        <span>
-          {entry}
-          <span style="opacity: 0.6; margin-left: 4px"> • 12:23 </span>
+        {@html entry.content}
+        <span style="opacity: 0.6; margin-left: 4px"
+          >• {entry.createdAt.toLocaleDateString()}
         </span>
       </li>
     {/each}
@@ -66,6 +68,10 @@
     }
   }
 
+  :global(.paroo) {
+    display: inline-block;
+  }
+
   .handle {
     width: 70%;
     background: var(--colors-text);
@@ -74,9 +80,17 @@
     opacity: 0.8;
     margin-top: 1em;
   }
+  .heading {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .stream {
+    opacity: 0.8;
+    margin-bottom: -10px;
+  }
 
   ul {
-    width: 20ch;
     list-style: none;
   }
 

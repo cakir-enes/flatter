@@ -1,33 +1,5 @@
-<script lang="ts">
-  import Stream from "./components/Stream.svelte";
-  import Editor from "./components/TipTap.svelte";
-
+<script lang="ts" context="module">
   import interact from "interactjs";
-  let show = false;
-  let activeStream: string;
-  let lastFocusedStream: HTMLElement = null;
-
-  let streams = { "Random:Garbage": ["asdasda", "zczczxc"] };
-
-  const blackKeys = ["Meta", "Tab", "Super", "OS", "Alt"];
-  function handleKeyDown(e: KeyboardEvent) {
-    if (e.key === "Escape") {
-      show = false;
-      lastFocusedStream?.focus();
-    } else {
-      //   let focusOnBody = document.body === document.activeElement;
-      if (!blackKeys.includes(e.key)) show = true;
-    }
-  }
-
-  window.addEventListener("focusin", (ev: FocusEvent) => {
-    const title = ev.target.title;
-    if (title) {
-      lastFocusedStream = ev.target as HTMLElement;
-    }
-    // document.querySelector(`section[title=`);
-  });
-
   // target elements with the "draggable" class
   interact(".draggable")
     .draggable({
@@ -73,10 +45,34 @@
     target.setAttribute("data-y", y);
   }
 
-  // this function is used later in the resizing and gesture demos
-  window.dragMoveListener = dragMoveListener;
+  function encodeB64(str) {
+    return btoa(str);
+  }
 
-  export let themeSettings = {
+  function makeCSSVars(settings, prefix = "-") {
+    return Object.entries(settings)
+      .flatMap(([key, value]) => {
+        const path = prefix + "-" + key;
+        if (typeof value === "object") return makeCSSVars(value, path);
+        else return `${path}:${value};`;
+      })
+      .join("\n");
+  }
+</script>
+
+<script lang="ts">
+  import { get } from "svelte/store";
+
+  import Stream from "./components/Stream.svelte";
+  import Editor from "./components/TipTap.svelte";
+  import ts from "./stores";
+  import TopicStore from "./stores";
+  import type { RTopic } from "./stores/RTopic";
+  let activeTopic: RTopic;
+  let show = false;
+  let activeStream: string;
+  let lastFocusedStream: HTMLElement = null;
+  let themeSettings = {
     font: {
       family: "Merriweather, serif",
     },
@@ -92,18 +88,30 @@
     },
   };
 
-  function encodeB64(str) {
-    return btoa(str);
+  const blackKeys = ["Meta", "Tab", "Super", "OS", "Alt"];
+  function handleKeyDown(e: KeyboardEvent) {
+    if (e.key === "Escape") {
+      show = false;
+      lastFocusedStream?.focus();
+    } else {
+      //   let focusOnBody = document.body === document.activeElement;
+      if (!blackKeys.includes(e.key)) show = true;
+    }
   }
 
-  function makeCSSVars(settings, prefix = "-") {
-    return Object.entries(settings)
-      .flatMap(([key, value]) => {
-        const path = prefix + "-" + key;
-        if (typeof value === "object") return makeCSSVars(value, path);
-        else return `${path}:${value};`;
-      })
-      .join("\n");
+  window.addEventListener("focusin", (ev: FocusEvent) => {
+    const title = ev.target.title;
+    if (title) {
+      lastFocusedStream = ev.target as HTMLElement;
+    }
+    // document.querySelector(`section[title=`);
+  });
+
+  async function onNewEntry(content) {
+    if (!activeTopic) {
+      activeTopic = await TopicStore.newTopic("garbage", "random");
+    }
+    activeTopic.append(content);
   }
 
   $: themeCSS = `:root {${makeCSSVars(themeSettings)}}`;
@@ -115,10 +123,13 @@
 <svelte:window on:keydown={handleKeyDown} />
 
 <main>
-  <Editor bind:activeStream {show} />
-  {#each Object.entries(streams) as [title, entries]}
-    <Stream {title} {entries} />
+  <Editor bind:activeStream {show} {onNewEntry} />
+  {#each $TopicStore as rtopic}
+    <Stream topic={rtopic} />
   {/each}
+  <!-- {#each Object.entries() as [title, entries]}
+    <Stream {title} {entries} />
+  {/each} -->
 </main>
 
 <style lang="scss">

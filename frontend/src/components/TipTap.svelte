@@ -54,8 +54,6 @@
       height: window.innerHeight - y,
       right: 0,
     };
-
-    console.log("STRIM ", strimRect);
   }
 
   function focus() {
@@ -124,7 +122,7 @@
     }}
   >
     <Clippy anchor={true} />
-    <RefFinder
+    <!-- <RefFinder
       rect={strimRect}
       show={true}
       onCancel={() => focus()}
@@ -140,7 +138,7 @@
             .run();
         });
       }}
-    />
+    /> -->
   </div>
 </div>
 
