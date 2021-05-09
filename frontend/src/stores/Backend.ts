@@ -17,7 +17,7 @@ export default class Backend {
     }
 
     async loadTopic(id: string): Promise<RTopic> {
-        throw Error("aa")
+        return null
     }
 }
 

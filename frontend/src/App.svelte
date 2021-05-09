@@ -68,9 +68,7 @@
   import ts from "./stores";
   import TopicStore from "./stores";
   import type { RTopic } from "./stores/RTopic";
-  let activeTopic: RTopic;
   let show = false;
-  let activeStream: string;
   let lastFocusedStream: HTMLElement = null;
   let themeSettings = {
     font: {
@@ -107,13 +105,6 @@
     // document.querySelector(`section[title=`);
   });
 
-  async function onNewEntry(content) {
-    if (!activeTopic) {
-      activeTopic = await TopicStore.newTopic("garbage", "random");
-    }
-    activeTopic.append(content);
-  }
-
   $: themeCSS = `:root {${makeCSSVars(themeSettings)}}`;
 </script>
 
@@ -123,13 +114,10 @@
 <svelte:window on:keydown={handleKeyDown} />
 
 <main>
-  <Editor bind:activeStream {show} {onNewEntry} />
+  <Editor {show} />
   {#each $TopicStore as rtopic}
     <Stream topic={rtopic} />
   {/each}
-  <!-- {#each Object.entries() as [title, entries]}
-    <Stream {title} {entries} />
-  {/each} -->
 </main>
 
 <style lang="scss">

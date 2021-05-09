@@ -32,7 +32,11 @@
 
   <ul class="content">
     {#each $topic.entries as entry, i}
-      <li class:focused={i === focus} class:selected={selections[i]}>
+      <li
+        class="entry"
+        class:focused={i === focus}
+        class:selected={selections[i]}
+      >
         {@html entry.content}
         <span style="opacity: 0.6; margin-left: 4px"
           >• {entry.createdAt.toLocaleDateString()}
@@ -68,10 +72,6 @@
     }
   }
 
-  :global(.paroo) {
-    display: inline-block;
-  }
-
   .handle {
     width: 70%;
     background: var(--colors-text);
@@ -83,6 +83,10 @@
   .heading {
     display: flex;
     flex-direction: column;
+  }
+
+  :global(.entry p:last-of-type) {
+    display: inline-block;
   }
 
   .stream {

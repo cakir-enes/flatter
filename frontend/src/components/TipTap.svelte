@@ -4,10 +4,14 @@
   import { Editor, posToDOMRect } from "@tiptap/core";
   import RefFinder from "./RefFinder.svelte";
   import { tiptapEditor } from "../actions";
+  import ts, { activeTopic } from "../stores";
+  import { get } from "svelte/store";
 
   export let show: boolean = false;
-  export let onNewEntry: (content: string) => void;
-  export let activeStream: string;
+  let stream: string = "Garbage";
+  let topic: string = "Random";
+
+  $: activeTitle = stream + ":" + topic;
 
   let editor: Editor;
   let showRef = false;
@@ -78,6 +82,17 @@
     }
   }
 
+  async function onNewEntry() {
+    const content = editor.getHTML();
+    editor.chain().clearContent().run();
+
+    let t = activeTopic.ref && get(activeTopic.ref);
+    if (t?.stream !== stream || t?.title !== topic) {
+      await activeTopic.activate(null, { stream, topic });
+    }
+    await activeTopic.ref.append(content);
+  }
+
   function handleKeyDown(e: KeyboardEvent) {
     if (e.ctrlKey) {
       e.stopPropagation();
@@ -114,14 +129,10 @@
       init: (e) => {
         editor = e;
       },
-      onDone: () => {
-        const content = editor.getHTML();
-        editor.chain().clearContent().run();
-        onNewEntry(content);
-      },
+      onDone: onNewEntry,
     }}
   >
-    <Clippy anchor={true} />
+    <Clippy title={activeTitle} anchor={true} />
     <!-- <RefFinder
       rect={strimRect}
       show={true}
@@ -143,7 +154,7 @@
 </div>
 
 {#if !show}
-  <Clippy anchor={false} />
+  <Clippy title={activeTitle} anchor={false} />
 {/if}
 
 <style lang="scss">
