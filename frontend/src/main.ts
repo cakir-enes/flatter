@@ -6,17 +6,19 @@ import { createTopicStore } from './stores';
 
 let app;
 
-// Wails.Init(() => {
-// 	app = new App({
-// 		target: document.body,
-// 	});
-// });
+Wails.Init(async () => {
+	let r = await window.backend.Flat.Append(JSON.stringify({ ID: "asd", Refs: ["contento"], Content: "asdsadas" }))
 
-const backend = new Backend()
-const ts = createTopicStore(backend)
-
-app = new App({
-	target: document.body,
+	console.log(r)
+	app = new App({
+		target: document.body,
+	});
 });
+
+
+
+// app = new App({
+// 	target: document.body,
+// });
 
 export default app;

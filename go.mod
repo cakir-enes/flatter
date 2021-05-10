@@ -7,6 +7,7 @@ require (
 	github.com/fatih/color v1.10.0 // indirect
 	github.com/konsorten/go-windows-terminal-sequences v1.0.3 // indirect
 	github.com/leaanthony/slicer v1.5.0 // indirect
+	github.com/mattn/go-sqlite3 v1.14.7
 	github.com/mgutz/ansi v0.0.0-20200706080929-d51e80ef957d // indirect
 	github.com/pkg/browser v0.0.0-20210115035449-ce105d075bb4 // indirect
 	github.com/pkg/errors v0.9.1 // indirect

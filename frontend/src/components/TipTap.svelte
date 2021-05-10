@@ -52,7 +52,7 @@
 
     strimRect = {
       left: left,
-      top: rect.y - 23,
+      top: rect.y - 25,
       width: width,
       bottom: 0,
       height: window.innerHeight - y,

@@ -17,6 +17,7 @@ var js string
 var css string
 
 func main() {
+	flat := Flat{db: make(map[string][]string)}
 
 	app := wails.CreateApp(&wails.AppConfig{
 		Width:     1024,
@@ -28,6 +29,6 @@ func main() {
 		Colour:    "#131313",
 	})
 
-	app.Bind(basic)
+	app.Bind(&flat)
 	app.Run()
 }
